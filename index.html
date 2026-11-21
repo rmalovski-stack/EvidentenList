@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Евидентен лист - СОУ 28 Ноември Дебар</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: #f4f7fc; padding: 20px; max-width: 900px; margin: auto; color: #222; }
+        .card { background: white; padding: 28px; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.1); margin-bottom: 25px; }
+        h1 { color: #1a3b5d; text-align: center; margin: 0 0 8px 0; font-size: 24px; }
+        h2 { color: #1a3b5d; border-bottom: 3px solid #1a73e8; padding-bottom: 10px; margin-top: 0; }
+        .school-header { text-align: center; margin-bottom: 20px; }
+        .school-header .school-name { font-size: 20px; font-weight: 700; color: #1a3b5d; }
+        .school-header .subtitle { font-size: 15px; color: #555; margin-top: 4px; }
+        .klasen-info { background: #e8f0fe; border-left: 6px solid #1a73e8; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; color: #1a3b5d; }
+        .napomena { background: #fff3cd; border-left: 6px solid #ffc107; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; color: #856404; font-size: 14px; }
+        .form-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; align-items: flex-end; }
+        .form-group { flex: 1 1 200px; }
+        label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 5px; color: #333; }
+        input, select { width: 100%; padding: 11px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; }
+        .btn { padding: 11px 24px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .btn-primary { background: #1a73e8; color: white; }
+        .btn-primary:hover { background: #1557b0; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+        th { background: #1a3b5d; color: white; padding: 10px 12px; text-align: left; }
+        td { padding: 9px 12px; border-bottom: 1px solid #e0e0e0; }
+        tr:nth-child(even) { background: #f8fafc; }
+        .grade { font-weight: 700; font-size: 16px; color: #1a3b5d; }
+        .badge { display: inline-block; background: #e9ecef; padding: 3px 10px; border-radius: 20px; font-size: 13px; }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .loading { display: inline-block; width: 18px; height: 18px; border: 3px solid #f3f3f3; border-top: 3px solid #1a73e8; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px; vertical-align: middle; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #resultCard { display: none; }
+        .meta-info { display: flex; flex-wrap: wrap; gap: 18px; margin: 15px 0 20px; font-size: 15px; }
+        .meta-info div { background: #f1f5f9; padding: 8px 14px; border-radius: 8px; }
+        .meta-info strong { color: #1a3b5d; }
+        .attendance-box { display: flex; flex-wrap: wrap; gap: 15px; margin: 18px 0; }
+        .att-card { flex: 1 1 140px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; text-align: center; }
+        .att-card .num { font-size: 26px; font-weight: 800; color: #1a3b5d; }
+        .att-card .label { font-size: 13px; color: #64748b; margin-top: 4px; }
+        .pedagoski { background: #fefce8; border: 1px solid #fde047; border-radius: 10px; padding: 14px 18px; margin-top: 15px; }
+        .footer-sign { display: flex; justify-content: space-between; margin-top: 30px; font-size: 14px; color: #555; }
+        .error-msg { color: #dc3545; font-weight: 600; margin-top: 10px; display: none; }
+        .success-msg { color: #28a745; font-weight: 600; margin-top: 10px; }
+        @page { size: A4 portrait; margin: 8mm; }
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none !important; }
+            #resultCard { display: block !important; }
+            * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+        /* компактен приказ за печатење на една A4 страница (се вклучува само при печатење) */
+        body.pm { width: 194mm; max-width: none; margin: 0; padding: 0; background: #fff; font-size: 11px; }
+        body.pm .card { box-shadow: none; border: none; border-radius: 0; padding: 0; margin: 0; }
+        body.pm .no-print { display: none !important; }
+        body.pm h1 { font-size: 16px; margin: 0 0 4px; }
+        body.pm h2 { font-size: 13px; padding-bottom: 4px; margin: 10px 0 4px; }
+        body.pm .school-header { margin-bottom: 6px; }
+        body.pm .school-header .school-name { font-size: 15px; }
+        body.pm .school-header .subtitle { font-size: 11px; margin-top: 2px; }
+        body.pm .meta-info { gap: 6px; margin: 6px 0 8px; font-size: 11px; }
+        body.pm .meta-info div { padding: 4px 8px; }
+        body.pm table { margin-top: 4px; font-size: 11px; }
+        body.pm th { padding: 4px 8px; }
+        body.pm td { padding: 3px 8px; }
+        body.pm .grade { font-size: 12px; }
+        body.pm .attendance-box { gap: 8px; margin: 8px 0; }
+        body.pm .att-card { flex: 1 1 80px; padding: 6px; }
+        body.pm .att-card .num { font-size: 16px; }
+        body.pm .att-card .label { font-size: 10px; margin-top: 2px; }
+        body.pm .pedagoski { padding: 6px 10px; margin-top: 8px; }
+        body.pm .footer-sign { margin-top: 12px; font-size: 11px; }
+        @media (max-width: 600px) {
+            .meta-info { flex-direction: column; gap: 8px; }
+            .attendance-box { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== ВНЕСУВАЊЕ НА ШИФРА ========== -->
+<div class="card no-print" id="searchCard">
+    <div class="school-header" id="schoolTitleSecret" style="cursor:pointer;">
+        <div class="school-name">СОУ „28 НОЕМВРИ“ – ДЕБАР</div>
+        <div class="subtitle">Евидентен лист</div>
+    </div>
+
+    <div class="klasen-info">
+        <strong>👨‍🏫 Класен раководител:</strong> Решат Маловски<br>
+        <span style="font-size:14px;">Дипломиран професор по математика</span><br>
+        <span style="font-size:14px;">📞 078 710 931 &nbsp;|&nbsp; ✉️ rmalovski@gmail.com</span>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Шифра на ученикот</label>
+            <input type="text" id="sifra" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="form-group">
+            <label>Лозинка</label>
+            <input type="password" id="tel" autocomplete="off">
+        </div>
+        <div class="form-group" style="flex: 0 0 auto;">
+            <button class="btn btn-primary" onclick="prebaraj()" id="searchBtn">🔍 Прикажи евидентен лист</button>
+        </div>
+    </div>
+    <div id="statusMsg"></div>
+    <div class="error-msg" id="errorMsg"></div>
+</div>
+
+<!-- ========== НАСТАВНИК ========== -->
+<div class="card no-print" id="adminCard" style="display:none;">
+    <h2 style="font-size:18px;margin-bottom:12px;">🔐 Внес на оцени и изостаноци</h2>
+    <div class="form-row">
+        <div class="form-group"><label>Учебна година</label><select id="aUg" onchange="aOsvezi()"></select></div>
+        <div class="form-group"><label>Година</label><select id="aGod" onchange="aOsvezi()"><option>I</option><option>II</option><option>III</option><option>IV</option></select></div>
+        <div class="form-group"><label>Паралелка</label><select id="aPar" onchange="aOsvezi()"></select></div>
+        <div class="form-group"><label>Ученик</label><select id="aUc" onchange="aForma()"></select></div>
+    </div>
+    <div class="form-row">
+        <div class="form-group"><input id="aIme" placeholder="Име"></div>
+        <div class="form-group"><input id="aPrez" placeholder="Презиме"></div>
+        <div class="form-group"><input id="aTel" placeholder="Тел. (4 цифри)" maxlength="4"></div>
+        <div class="form-group" style="flex:0 0 auto;"><button class="btn btn-primary" onclick="aDodadi()">➕ Додади ученик</button></div>
+    </div>
+    <div id="aForma"></div>
+    <div class="btn-group">
+        <button class="btn btn-secondary" onclick="aIzvezi()">⬇️ Извези податоци</button>
+        <label class="btn btn-secondary" style="margin:0;">⬆️ Вчитај податоци<input type="file" accept=".json" style="display:none" onchange="aVnesi(this)"></label>
+        <button class="btn btn-secondary" onclick="aZatvori()">✖ Затвори</button>
+    </div>
+</div>
+
+<!-- ========== РЕЗУЛТАТ - ЕВИДЕНТЕН ЛИСТ ========== -->
+<div class="card" id="resultCard">
+    <div class="school-header">
+        <div class="school-name">СОУ „28 НОЕМВРИ“ – ДЕБАР</div>
+        <div class="subtitle" style="font-size:17px; font-weight:600; margin-top:6px;">ЕВИДЕНТЕН ЛИСТ</div>
+    </div>
+
+    <div class="meta-info" id="metaInfo">
+        <!-- се полни преку JS -->
+    </div>
+
+    <h2 style="font-size:18px; margin-bottom:8px;">Оцени по предмети</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:50px;">Ред.бр.</th>
+                <th>Наставен предмет</th>
+                <th>Претходни</th><th style="width:100px;">Тековна</th>
+            </tr>
+        </thead>
+        <tbody id="gradesBody">
+            <!-- се полни преку JS -->
+        </tbody>
+    </table>
+
+    <h2 style="font-size:18px; margin-top:28px;">Евиденција на изостаноци</h2>
+    <div class="attendance-box" id="attendanceBox">
+        <!-- се полни преку JS -->
+    </div>
+
+    <div id="zabLog"></div>
+    <div id="izostLog"></div>
+    <div class="pedagoski" id="pedagoskiBox">
+        <strong>Педагошки мерки:</strong>
+        <div id="pedagoskiText" style="margin-top:6px;"></div>
+    </div>
+
+    <div class="no-print" id="lozinkaBox" style="display:none;margin-top:24px;">
+        <h2 style="font-size:18px;margin-bottom:8px;">🔒 Лозинка</h2>
+        <p id="lozinkaInfo" style="font-size:14px;color:#555;margin:0 0 10px;"></p>
+        <div class="form-row">
+            <div class="form-group"><label>Нова лозинка (4 цифри)</label><input type="password" id="novaL" inputmode="numeric" maxlength="4" autocomplete="new-password"></div>
+            <div class="form-group"><label>Повторете ја</label><input type="password" id="novaL2" inputmode="numeric" maxlength="4" autocomplete="new-password"></div>
+            <div class="form-group" style="flex: 0 0 auto;"><button class="btn btn-primary" onclick="smeniLozinka()">Зачувај</button></div>
+        </div>
+    </div>
+
+    <div class="footer-sign">
+        <div>Датум: <span id="datumAzuriranje">—</span></div>
+        <div>Класен раководител: <strong>Решат Маловски</strong></div>
+    </div>
+
+    <div class="btn-group no-print" style="margin-top:25px;">
+        <button class="btn btn-success" onclick="window.print()">🖨️ Печати / Зачувај како PDF</button>
+        <button class="btn btn-secondary" onclick="novaPrebaruvanje()">🔄 Нова пребарување</button>
+    </div>
+</div>
+
+<script>
+    // =====================================================
+    // КОНФИГУРАЦИЈА
+    // =====================================================
+    // ← Замени го овој URL со твојот Apps Script URL
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxe4ITX0-edxqkLvB_sgSFTmAfplQEoQMYQhjof41m76s4MFkwFiZydyCEAhEIFEutF/exec';
+
+    // Листа на предмети (точно според евидентниот лист)
+    const PREDMETI = [
+        { key: 'makedonski', label: 'Македонски јазик и литература' },
+        { key: 'matematika', label: 'Математика' },
+        { key: 'angliski', label: 'Англиски јазик' },
+        { key: 'germanski', label: 'Германски јазик' },
+        { key: 'informatika', label: 'Информатика' },
+        { key: 'istorija', label: 'Историја' },
+        { key: 'geografija', label: 'Географија' },
+        { key: 'biologija', label: 'Биологија' },
+        { key: 'hemija', label: 'Хемија' },
+        { key: 'fizika', label: 'Физика' },
+        { key: 'likovna', label: 'Ликовна уметност' },
+        { key: 'muzicka', label: 'Музичка уметност' },
+        { key: 'sport', label: 'Спорт' },
+        { key: 'vi', label: 'Вештачка интелигенција' },
+        { key: 'socijalni', label: 'Социјални иновации' },
+        { key: 'sociologija', label: 'Социологија' },
+        { key: 'latinski', label: 'Латински јазик' },
+        { key: 'programski', label: 'Програмски јазици' },
+        { key: 'vovedpravo', label: 'Вовед во право' },
+        { key: 'biznis', label: 'Бизнис и претприемништво' },
+        { key: 'ekonomija', label: 'Економија' },
+        { key: 'menadzment', label: 'Менаџмент' },
+        { key: 'filozofija', label: 'Филозофија' }
+    ];
+
+    // Предмети по година и насока (според евидентните листови)
+    const OSN = ['makedonski','matematika','angliski','germanski'];
+    const SUBJ = {
+        'I':   [...OSN,'informatika','istorija','geografija','biologija','hemija','fizika','likovna','muzicka','sport','vi','socijalni'],
+        'II':  [...OSN,'informatika','istorija','geografija','biologija','hemija','fizika','sociologija','likovna','muzicka','sport','vi','socijalni'],
+        'III_P': [...OSN,'istorija','geografija','biologija','hemija','fizika','latinski','programski','sport'],
+        'III_O': [...OSN,'istorija','biologija','hemija','fizika','sociologija','latinski','vovedpravo','sport'],
+        'IV_P':  [...OSN,'biologija','fizika','hemija','biznis','filozofija','sport'],
+        'IV_O':  [...OSN,'istorija','biznis','ekonomija','menadzment','filozofija','sport']
+    };
+    const NASOKA = {P: 'природно-математичка', O: 'општествена'};
+    // g = 0..3 (I..IV); насока важи од III година
+    function predmetiZa(g, nas) {
+        const k = g < 2 ? ['I','II'][g] : ['III','IV'][g-2] + '_' + (nas === 'O' ? 'O' : 'P');
+        return SUBJ[k].map(key => PREDMETI.find(p => p.key === key));
+    }
+
+    // =====================================================
+    // ФУНКЦИИ
+    // =====================================================
+    // ДЕМО: примерок на ученик за преглед без скрипта
+    const DEMO_UCENIK = {
+        ime: 'Примерок', prezime: 'Ученик', paralelka: 'I-5', redenBroj: 7, period: 'Прво тримесечје',
+        makedonski: '4', matematika: '5', angliski: '5', germanski: '3', informatika: '5',
+        istorija: '4', geografija: '4', biologija: '3', hemija: '2', fizika: '4',
+        likovna: '5', muzicka: '5', sport: '5', vi: '5', socijalni: '4',
+        opravdani: 12, neopravdani: 3,
+        pedagoski: 'Усна опомена од класниот раководител.',
+        azurirano: '19.11.2026'
+    };
+
+    function prikaziDemo() {
+        srvKey = null;
+        document.getElementById('errorMsg').style.display = 'none';
+        prikaziRezultat(DEMO_UCENIK);
+    }
+
+    // ===== ПЕЧАТЕЊЕ: една страница A4 портрет =====
+    function priPecat() {
+        const el = document.getElementById('resultCard');
+        if (!el || getComputedStyle(el).display === 'none') return;
+        document.body.classList.add('pm'); el.style.zoom = '';
+        const avail = (297 - 16) * 96 / 25.4 - 6, h = el.scrollHeight;
+        if (h > avail) el.style.zoom = (avail / h).toFixed(3);
+    }
+    function poPecat() { document.body.classList.remove('pm'); const el = document.getElementById('resultCard'); if (el) el.style.zoom = ''; }
+    window.addEventListener('beforeprint', priPecat);
+    window.addEventListener('afterprint', poPecat);
+
+    // ===== НАСТАВНИК - ПРЕКУ СЕРВЕР / GOOGLE SHEET (НЕ localStorage) =====
+    const ADMIN_PIN = '4012';
+    const START_UG = 2026, RIM = ['I','II','III','IV'];
+    const $ = id => document.getElementById(id);
+    const tekovnaUg = () => { const d = new Date(); return d.getMonth() >= 8 ? d.getFullYear() : d.getFullYear() - 1; };
+    const danes = () => { const d = new Date(); return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear(); };
+    const ZAB_TIP_EARLY = ['Однесување на час','Редовност','Напуштање на час','Доцнење','Ангажираност','Домашни задачи','Друго'];
+    const ZAB_TIP = ZAB_TIP_EARLY;
+    let adminPin = null; // se setira pri otvoriAdmin
+    let adminUcenici = [];
+    let adminTekoven = null; // student od server
+    function otvoriAdmin() {
+        const pin = prompt('Внесете PIN за наставник:');
+        if (pin !== ADMIN_PIN) { if (pin !== null) alert('Погрешен PIN.'); return; }
+        adminPin = pin;
+        $('searchCard').style.display = 'none'; $('resultCard').style.display = 'none'; $('adminCard').style.display = 'block';
+        if (!$('aUg').options.length) {
+            for (let y = START_UG; y < START_UG + 8; y++) $('aUg').add(new Option(y + '/' + (y+1), y));
+            for (let i = 1; i <= 10; i++) $('aPar').add(new Option(i, i));
+            $('aUg').value = Math.max(START_UG, tekovnaUg()); $('aPar').value = 5;
+        }
+        aOsvezi();
+    }
+    function aZatvori() { $('adminCard').style.display = 'none'; $('searchCard').style.display = 'block'; }
+    function aKlasa() { const ug = +$('aUg').value; return {ug, gen: ug - RIM.indexOf($('aGod').value), par: +$('aPar').value}; }
+    function aUcenik() { return adminUcenici.find(x => x.br == $('aUc').value); }
+    function aOsvezi() {
+        const k = aKlasa(), sel = $('aUc'); sel.innerHTML = '<option>Се вчитува...</option>'; $('aForma').innerHTML = '<p style="color:#64748b">Се вчитуваат ученици од Google Sheet...</p>';
+        jsonp({action:'listStudents', pin: adminPin, ug: k.ug, god: $('aGod').value, par: k.par}, d => {
+            if (!d || !d.success) { $('aForma').innerHTML = '<p style="color:#dc3545">❌ ' + ((d&&d.message)||'Грешка при вчитување.') + '</p>'; sel.innerHTML=''; return; }
+            adminUcenici = d.ucenici || [];
+            sel.innerHTML = '';
+            if (!adminUcenici.length) { $('aForma').innerHTML = '<p>Нема ученици во оваа паралелка во Sheet-от „Ученици“. Додадете ученик погоре или во Sheet-от.</p>'; return; }
+            adminUcenici.forEach(u => sel.add(new Option(u.code + ' – ' + u.ime + ' ' + u.prezime, u.br)));
+            aForma();
+        });
+    }
+    function aDodadi() {
+        const ime = $('aIme').value.trim(), prez = $('aPrez').value.trim();
+        if (!ime || !prez) return alert('Внесете име и презиме.');
+        const k = aKlasa();
+        jsonp({action:'addStudent', pin: adminPin, ug: k.ug, god: $('aGod').value, par: k.par, ime, prezime: prez, tel: ($('aTel').value||'').replace(/\D/g,'')}, d => {
+            if (!d || !d.success) return alert((d&&d.message)||'Не е додаден.');
+            $('aIme').value=''; $('aPrez').value=''; $('aTel').value=''; aOsvezi();
+            setTimeout(()=>{ $('aUc').value = d.br; aForma(); }, 400);
+        });
+    }
+    function aForma() {
+        const u = aUcenik(), k = aKlasa();
+        if (!u) { $('aForma').innerHTML = '<p>Нема ученици во оваа паралелка.</p>'; return; }
+        $('aForma').innerHTML = '<p style="color:#64748b">Се вчитуваат оцени за ' + u.ime + ' ' + u.prezime + '...</p>';
+        jsonp({action:'getTeacherStudent', pin: adminPin, ug: k.ug, god: $('aGod').value, par: k.par, br: u.br}, d => {
+            if (!d || !d.success || !d.student) { $('aForma').innerHTML = '<p style="color:#dc3545">❌ ' + ((d&&d.message)||'Грешка.') + '</p>'; return; }
+            adminTekoven = d.student;
+            const s = d.student, g = k.ug - u.gen;
+            const predmeti = s.predmeti || [];
+            let h = '<p><strong>Шифра за родител: ' + s.paralelka + '-' + String(s.redenBroj).padStart(2,'0') + '</strong> &nbsp;|&nbsp; Насока: ' + (s.nasoka||'—') + '</p>';
+            h += '<table><tr><th>Предмет</th><th>Тековна</th><th>Нова оцена</th></tr>';
+            predmeti.forEach(pp => { h += `<tr><td>${pp.label}</td><td>${s[pp.key]||'—'}</td><td><input id="g_${pp.key}" type="number" min="1" max="5" style="width:80px" data-label="${pp.label.replace(/"/g,'&quot;')}"></td></tr>`; });
+            h += `</table><p style="margin-top:12px;">Досега: <strong>${s.opravdani||0}</strong> оправдани, <strong>${s.neopravdani||0}</strong> неоправдани</p>
+                <div class="form-row"><div class="form-group"><label>Нови оправдани (само нови, не вкупно)</label><input id="nOp" type="number" min="0"></div>
+                <div class="form-group"><label>Нови неоправдани (само нови)</label><input id="nNe" type="number" min="0"></div></div>
+                <label>Педагошки мерки (нов запис, ако има)</label><input id="nPed" value="${(s.pedagoski||'').replace(/"/g,'&quot;')}">
+                <div class="btn-group"><button class="btn btn-success" onclick="aZapisi()">💾 Зачувај промена (во Google Sheet)</button></div>`;
+            h += `<h3 style="margin:22px 0 8px;font-size:16px;">📝 Белешки за однесување и редовност</h3>
+                <div class="form-row"><div class="form-group"><label>Вид</label><select id="zTip">${ZAB_TIP.map(t => `<option>${t}</option>`).join('')}</select></div>
+                <div class="form-group"><label>Предмет</label><select id="zPred"><option value="">—</option>${predmeti.map(pp => `<option>${pp.label}</option>`).join('')}</select></div></div>
+                <label>Белешка</label><input id="zTekst" placeholder="пр. Доцни 10 минути на 3. час">
+                <label style="display:block;margin:8px 0;"><input type="checkbox" id="zVid" checked style="width:auto"> Видливо за родителот</label>
+                <button class="btn btn-secondary" onclick="aZab()">➕ Додади белешка</button><div id="aZabLista"></div>`;
+            $('aForma').innerHTML = h; aZabRender();
+        });
+    }
+    function aZapisi() {
+        const u = aUcenik(), k = aKlasa(), s = adminTekoven;
+        if (!u || !s) return;
+        const jobs = [];
+        (s.predmeti||[]).forEach(pp => {
+            const el = $('g_' + pp.key); if (!el) return;
+            const v = el.value.trim(); if (v) jobs.push({predmet: pp.label, ocena: v});
+        });
+        const op = parseInt($('nOp').value)||0, ne = parseInt($('nNe').value)||0;
+        const ped = $('nPed').value.trim();
+        if (!jobs.length && !op && !ne && !ped) return alert('Нема ништо ново за зачувување.');
+        // 1) ocenki - edna po edna, za istorijata da se zapise tocno
+        let idx = 0;
+        const nextGrade = () => {
+            if (idx >= jobs.length) return saveIzostStep();
+            const j = jobs[idx++];
+            jsonp({action:'saveGrade', pin: adminPin, ug: k.ug, god: $('aGod').value, par: k.par, br: u.br, predmet: j.predmet, ocena: j.ocena}, d => {
+                if (!d || !d.success) { alert('Грешка кај ' + j.predmet + ': ' + ((d&&d.message)||'')); return; }
+                nextGrade();
+            });
+        };
+        const saveIzostStep = () => {
+            if (!op && !ne && !ped) return done();
+            const code = s.paralelka + '-' + String(s.redenBroj).padStart(2,'0');
+            // pedagoski: zacuvuvaj samo ako e razlicno od tekovnoto, inaku ke se duplira
+            const pedToSave = (ped && ped !== (s.pedagoski||'')) ? ped : '';
+            jsonp({action:'saveIzost', pin: adminPin, ug: k.ug, code, op, ne, pedagoski: pedToSave}, d => {
+                if (!d || !d.success) return alert((d&&d.message)||'Грешка при изостаноци.');
+                done();
+            });
+        };
+        const done = () => { alert('Зачувано во Google Sheet. Претходните оцени автоматски отидоа во Историја.'); aForma(); };
+        nextGrade();
+    }
+    function aIzvezi() { alert('Извоз сега се прави од Google Sheet: File → Download. Податоците веќе не се во localStorage.'); }
+    function aVnesi(inp) { alert('Вчитување од JSON повеќе не се користи. Учениците се во листот „Ученици“ во Google Sheet.'); if(inp) inp.value=''; }
+
+    // ===== БЕЛЕШКИ =====
+    let srvKey = null;
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    function jsonp(params, cb) {
+        const name = 'jp_' + Date.now() + Math.floor(Math.random() * 1000), sc = document.createElement('script');
+        window[name] = d => { delete window[name]; sc.remove(); cb(d); };
+        sc.onerror = () => { delete window[name]; sc.remove(); cb(null); };
+        sc.src = GOOGLE_SCRIPT_URL + '?' + Object.keys(params).map(k => k + '=' + encodeURIComponent(params[k])).join('&') + '&callback=' + name;
+        document.head.appendChild(sc);
+    }
+    function smeniLozinka() {
+        const a = $('novaL').value.trim(), b = $('novaL2').value.trim();
+        if (!/^\d{4}$/.test(a)) return alert('Лозинката мора да има точно 4 цифри.');
+        if (/^(\d)\1{3}$/.test(a) || a === '1234' || a === '4321') return alert('Лозинката е премногу лесна. Изберете друга.');
+        if (a !== b) return alert('Лозинките не се исти.');
+        jsonp({action: 'changePassword', sifra: srvKey.sifra, tel: srvKey.tel, nova: a}, d => {
+            if (d && d.success) { srvKey.tel = a; $('novaL').value = ''; $('novaL2').value = ''; $('lozinkaInfo').innerText = '✅ Лозинката е запишана. Со неа ќе се најавувате следниот пат.'; }
+            else alert((d && d.message) || 'Лозинката не е сменета.');
+        });
+    }
+    function aZabRender() {
+        const s = adminTekoven; if (!s || !$('aZabLista')) return;
+        const z = s.zabeleskiSite || [];
+        $('aZabLista').innerHTML = z.length ? '<table><tr><th>Датум</th><th>Вид</th><th>Предмет</th><th>Белешка</th><th></th></tr>' +
+            z.map((x, i) => `<tr><td>${x.datum}</td><td>${esc(x.tip)}</td><td>${esc(x.pred || '—')}</td><td>${esc(x.tekst)}${x.vid ? '' : ' <small>(само наставник)</small>'}</td><td><a href="#" onclick="aZabBrisi(${x.idx});return false;">✖</a></td></tr>`).reverse().join('') + '</table>' : '<p style="color:#64748b">Нема белешки.</p>';
+    }
+    function aZab() {
+        const txt = $('zTekst').value.trim(); if (!txt) return alert('Внесете белешка.');
+        const u = aUcenik(), k = aKlasa(), s = adminTekoven; if (!u || !s) return;
+        const code = s.paralelka + '-' + String(s.redenBroj).padStart(2,'0');
+        jsonp({action:'saveZabeleska', pin: adminPin, ug: k.ug, code, tip: $('zTip').value, pred: $('zPred').value, tekst: txt, vid: $('zVid').checked ? 1 : 0}, d => {
+            if (!d || !d.success) return alert((d&&d.message)||'Грешка.');
+            $('zTekst').value=''; aForma();
+        });
+    }
+    function aZabBrisi(idx) {
+        if (!confirm('Да се избрише белешката?')) return;
+        const u = aUcenik(), k = aKlasa(), s = adminTekoven; if (!u || !s) return;
+        const code = s.paralelka + '-' + String(s.redenBroj).padStart(2,'0');
+        jsonp({action:'deleteZabeleska', pin: adminPin, ug: k.ug, code, idx}, d => {
+            if (!d || !d.success) return alert((d&&d.message)||'Грешка.');
+            aForma();
+        });
+    }
+
+    // Нормализација на шифра: кирилични/латински слични букви, цртички, празни места
+    function normalizeSifra(v) {
+        const map = {'І':'I','і':'I','А':'A','а':'A','В':'B','в':'B','Е':'E','е':'E','К':'K','к':'K','М':'M','м':'M','Н':'H','н':'H','О':'O','о':'O','Р':'P','р':'P','С':'C','с':'C','Т':'T','т':'T','Х':'X','х':'X'};
+        return String(v || '')
+            .replace(/[\u2010-\u2015\u2212\u2043_–—]/g, '-')
+            .replace(/\s+/g, '')
+            .split('').map(ch => map[ch] || ch).join('')
+            .toUpperCase();
+    }
+
+    async function prebaraj() {
+        const raw = $('tel').value.trim(), sifra = normalizeSifra($('sifra').value);
+        const statusMsg = document.getElementById('statusMsg');
+        const errorMsg = document.getElementById('errorMsg');
+        const searchBtn = document.getElementById('searchBtn');
+
+        if (raw.toUpperCase() === 'DEMO' || sifra === 'DEMO') { srvKey = null; prikaziDemo(); return; }
+        if (!sifra) { errorMsg.style.display = 'block'; errorMsg.innerText = '❌ Ве молиме внесете ја шифрата на ученикот.'; return; }
+        const tel = raw;
+        if (!tel) { errorMsg.style.display = 'block'; errorMsg.innerText = '❌ Внесете ја лозинката.'; return; }
+        // Roditelite sekogas odat na server/Sheet, ne na localStorage
+
+        errorMsg.style.display = 'none';
+        if (!GOOGLE_SCRIPT_URL) { errorMsg.style.display = 'block'; errorMsg.innerText = '❌ Серверот сè уште не е поврзан.'; return; }
+        statusMsg.innerHTML = '<span class="loading"></span> Се вчитуваат податоците...';
+        searchBtn.disabled = true;
+
+        try {
+            // JSONP начин (работи подобро со Google Apps Script)
+            const callbackName = 'jsonpCallback_' + Date.now();
+            const url = `${GOOGLE_SCRIPT_URL}?action=getStudent&sifra=${encodeURIComponent(sifra)}&tel=${encodeURIComponent(tel)}&callback=${callbackName}`;
+
+            // Креираме привремен script таг за JSONP
+            window[callbackName] = function(data) {
+                delete window[callbackName];
+                document.head.removeChild(script);
+
+                if (data && data.success && data.student) {
+                    srvKey = {sifra, tel}; prikaziRezultat(data.student);
+                    statusMsg.innerHTML = '';
+                } else {
+                    errorMsg.style.display = 'block';
+                    errorMsg.innerText = data && data.message ? data.message : '❌ Погрешна шифра или лозинка.';
+                    statusMsg.innerHTML = '';
+                }
+                searchBtn.disabled = false;
+            };
+
+            const script = document.createElement('script');
+            script.src = url;
+            script.onerror = function() {
+                errorMsg.style.display = 'block';
+                errorMsg.innerText = '❌ Грешка при поврзување со серверот. Проверете ја интернет врската.';
+                statusMsg.innerHTML = '';
+                searchBtn.disabled = false;
+                delete window[callbackName];
+            };
+            document.head.appendChild(script);
+
+        } catch (err) {
+            console.error(err);
+            errorMsg.style.display = 'block';
+            errorMsg.innerText = '❌ Настана грешка. Обидете се повторно.';
+            statusMsg.innerHTML = '';
+            searchBtn.disabled = false;
+        }
+    }
+
+    function prikaziRezultat(ucenik) {
+        // Мета податоци
+        document.getElementById('metaInfo').innerHTML = `
+            <div><strong>Име и презиме:</strong> ${ucenik.ime || ''} ${ucenik.prezime || ''}</div>
+            <div><strong>Година:</strong> ${ucenik.godina || 'I'} година</div>
+            ${ucenik.nasoka ? '<div><strong>Насока:</strong> ' + ucenik.nasoka + '</div>' : ''}
+            <div><strong>Паралелка:</strong> ${ucenik.paralelka || '—'}</div>
+            <div><strong>Ред. бр. во дневник:</strong> ${ucenik.redenBroj || '—'}</div>
+            <div><strong>Период:</strong> ${ucenik.period || 'Прво тримесечје'}</div>
+        `;
+
+        // Оцени
+        let gradesHtml = '';
+        (ucenik.predmeti || predmetiZa(0)).forEach((p, idx) => {
+            const ocena = ucenik[p.key] || '—';
+            const pret = ((ucenik.hist || {})[p.key] || []).map(h => h[0] + ' <small style="color:#64748b">(' + h[1] + ')</small>').join(', ') || '—';
+            let badgeClass = '';
+            if (ocena === '5' || ocena === 5) badgeClass = 'badge-success';
+            else if (ocena === '1' || ocena === 1 || ocena === '2' || ocena === 2) badgeClass = 'badge-danger';
+            else if (ocena && ocena !== '—') badgeClass = 'badge-warning';
+
+            gradesHtml += `
+                <tr>
+                    <td>${idx + 1}.</td>
+                    <td>${p.label}</td>
+                    <td>${pret}</td>
+                    <td><span class="grade ${badgeClass ? 'badge ' + badgeClass : ''}">${ocena}</span></td>
+                </tr>
+            `;
+        });
+        document.getElementById('gradesBody').innerHTML = gradesHtml;
+
+        // Изостаноци
+        const opravdani = parseInt(ucenik.opravdani) || 0;
+        const neopravdani = parseInt(ucenik.neopravdani) || 0;
+        const vkupno = opravdani + neopravdani;
+
+        document.getElementById('attendanceBox').innerHTML = `
+            <div class="att-card">
+                <div class="num" style="color:#28a745;">${opravdani}</div>
+                <div class="label">Оправдани</div>
+            </div>
+            <div class="att-card">
+                <div class="num" style="color:#dc3545;">${neopravdani}</div>
+                <div class="label">Неоправдани</div>
+            </div>
+            <div class="att-card">
+                <div class="num">${vkupno}</div>
+                <div class="label">Вкупно изостаноци</div>
+            </div>
+        `;
+
+        $('zabLog').innerHTML = (ucenik.zabeleski && ucenik.zabeleski.length) ? '<h2 style="font-size:18px;margin-top:28px;">Белешки за однесување и редовност</h2><table><tr><th>Датум</th><th>Вид</th><th>Предмет</th><th>Белешка</th></tr>' + ucenik.zabeleski.slice().reverse().map(x => `<tr><td>${x.datum}</td><td>${esc(x.tip)}</td><td>${esc(x.pred || '—')}</td><td>${esc(x.tekst)}</td></tr>`).join('') + '</table>' : '';
+        $('lozinkaBox').style.display = srvKey ? 'block' : 'none';
+        if (srvKey) $('lozinkaInfo').innerText = ucenik.lozinkaIzbrana ? 'Можете да ја промените лозинката (4 цифри).' : 'Сега користите почетна лозинка. Изберете своја лозинка од 4 цифри — со неа ќе се најавувате следниот пат.';
+
+        $('izostLog').innerHTML = (ucenik.izost && ucenik.izost.length) ? '<table><tr><th>Датум</th><th>Оправдани</th><th>Неоправдани</th></tr>' + ucenik.izost.map(e => `<tr><td>${e[2]}</td><td>${e[0]}</td><td>${e[1]}</td></tr>`).join('') + '</table>' : '';
+
+        // Педагошки мерки
+        const pedagoski = ucenik.pedagoski || 'Нема';
+        document.getElementById('pedagoskiText').innerText = pedagoski;
+
+        // Датум
+        document.getElementById('datumAzuriranje').innerText = ucenik.azurirano || '—';
+
+        // Прикажи резултат
+        document.getElementById('searchCard').style.display = 'none';
+        document.getElementById('resultCard').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function novaPrebaruvanje() {
+        srvKey = null; $('tel').value = '';
+        document.getElementById('resultCard').style.display = 'none';
+        document.getElementById('searchCard').style.display = 'block';
+        document.getElementById('sifra').value = '';
+        document.getElementById('errorMsg').style.display = 'none';
+        document.getElementById('statusMsg').innerHTML = '';
+        document.getElementById('sifra').focus();
+    }
+
+    // Enter клуч
+    ['sifra', 'tel'].forEach(id => document.getElementById(id).addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') prebaraj();
+    }));
+
+
+    // TAJEN VLEZ ZA NASTAVNIK - roditelite ne gledaat kopce
+    // Otvoranje: 1) klikni 3 pati brzo na naslovot SOU 28 NOEMVRI, ILI 2) pritisni Ctrl + Alt + N
+    (function(){
+        let clicks = 0, lastClick = 0;
+        const titleEl = document.getElementById('schoolTitleSecret');
+        if (titleEl) {
+            titleEl.addEventListener('click', function(){
+                const now = Date.now();
+                if (now - lastClick > 1500) clicks = 0;
+                lastClick = now;
+                clicks++;
+                if (clicks >= 3) { clicks = 0; otvoriAdmin(); }
+            });
+        }
+        document.addEventListener('keydown', function(e){
+            if (e.ctrlKey && e.altKey && (e.key === 'n' || e.key === 'N')) otvoriAdmin();
+        });
+    })();
+
+    // Фокус на полето
+    document.getElementById('sifra').focus();
+</script>
+
+</body>
+</html>
