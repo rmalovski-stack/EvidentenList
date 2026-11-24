@@ -200,7 +200,7 @@
     // КОНФИГУРАЦИЈА
     // =====================================================
     // ← Замени го овој URL со твојот Apps Script URL
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-TYk059bXMlrYD_gTG_VgNyB2B0wnEswNDi2b0jD5yNYzHX3C0jqLuIHEozqDDILh/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyryNmaGyhG_mkqhjGRe13-sVm8BtN1_FMnpBnoKlCwpBCrsJ_R0H4DNUWjYbSk3wsi/exec';
 
     // Листа на предмети (точно според евидентниот лист)
     const PREDMETI = [
@@ -516,7 +516,7 @@
         let gradesHtml = '';
         (ucenik.predmeti || predmetiZa(0)).forEach((p, idx) => {
             const ocena = ucenik[p.key] || '—';
-            const pret = ((ucenik.hist || {})[p.key] || []).map(h => h[0] + ' <small style="color:#64748b">(' + h[1] + ')</small>').join(', ') || '—';
+            const pret = ((ucenik.hist || {})[p.key] || []).map(h => { const stara = h[0]; const datum = h[1]; const nova = h[2] || ''; const per = h[3] || ''; const sifra = h[4] || ''; const ime = h[5] || ''; const ucTxt = ime ? ' • ' + ime : ''; return stara + ' → ' + nova + ' <small style="color:#64748b">(' + datum + ucTxt + ')</small>'; }).join(', ') || '—';
             let badgeClass = '';
             if (ocena === '5' || ocena === 5) badgeClass = 'badge-success';
             else if (ocena === '1' || ocena === 1 || ocena === '2' || ocena === 2) badgeClass = 'badge-danger';
